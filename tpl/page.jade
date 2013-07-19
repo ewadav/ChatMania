@@ -2,12 +2,14 @@
 html
 	head 
 		title = "Chat Mania - Real Time Chattin"
+		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(src='/chat.js')
 		script(src='/socket.io/socket.io.js')
+
 	body
 		#content(style='width: 500px; height: 300px; margin: 0 0 20px 0; border: solid 1px #999; overflow-y: scroll;') 
 		.controls
-			input#name(style='width:350px;')
+			input#name(style='width:350px;', placeholder='Username')
 			br
-			input#field(style='width:350px;')
+			input#field(style='width:350px;', placeholder='Message')
 			input#send(type='button', value='send')
