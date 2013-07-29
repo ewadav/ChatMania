@@ -21,6 +21,8 @@ io.sockets.on('connection', function(socket)	{
 	socket.emit('message', {message: 'Welcome to Chat Mania'});
 	socket.on('send', function(data)	{
 		io.sockets.emit('message', data);
+		var unix = Math.round(+new Date()/1000);
+		io.sockets.emit(unix);
 	});
 });
 
