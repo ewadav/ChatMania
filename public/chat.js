@@ -10,7 +10,6 @@ window.onload = function() {
     var sendButton = document.getElementById("send");
     var content = document.getElementById("content");
     var name = document.getElementById("name");
-    var currentDate = new Date();
  
     socket.on('message', function (data) {
         if(data.message) {
@@ -31,12 +30,15 @@ window.onload = function() {
     });
  
     sendButton.onclick = function() {
-        if(name.value == "") {
+        if (name.value == "") {
             alert("Please type your name!");
+        } else if (field.value == "") {
+            field.setAttribute('placeholder', 'Please enter a message');
         } else {
             var text = field.value;
-            var datetime = "Last Sync: " + currentDate.getDate() + "/"
-                + (currentDate.getMonth()+1)  + "/" 
+            var currentDate = new Date();
+            var datetime = "Last Sync: " + (currentDate.getMonth()+1) + "/"
+                + currentDate.getDate()  + "/" 
                 + currentDate.getFullYear() + " @ "  
                 + currentDate.getHours() + ":"  
                 + currentDate.getMinutes() + ":" 
@@ -44,6 +46,7 @@ window.onload = function() {
 
             socket.emit('send', { message: text, username: name.value, time: datetime});
             field.value = "";
+            field.focus();
         }
     };
  
