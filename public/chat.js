@@ -18,6 +18,7 @@ window.onload = function() {
             for(var i=0; i<messages.length; i++) {
                 html += '<b>' + (messages[i].username ? messages[i].username : 'Server') + ': </b>';
                 html += messages[i].message + '<br />';
+                html += messages[i].time;
             }
             content.innerHTML = html;
             content.scrollTop = content.scrollHeight;
@@ -31,7 +32,7 @@ window.onload = function() {
             alert("Please type your name!");
         } else {
             var text = field.value;
-            socket.emit('send', { message: text, username: name.value });
+            socket.emit('send', { message: text, username: name.value, time: Math.round(+new Date()/1000)});
             field.value = "";
         }
     };
