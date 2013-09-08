@@ -4,7 +4,6 @@
 
 window.onload = function() {
  
-    var messages = [];
     var socket = io.connect('http://localhost:3700');
     var field = document.getElementById("field");
     var sendButton = document.getElementById("send");
@@ -13,17 +12,7 @@ window.onload = function() {
  
     socket.on('message', function (data) {
         if(data.message) {
-            messages.push(data);
-            var html = '';
-            for(var i=0; i<messages.length; i++) {
-                html += '<b>' + (messages[i].username ? messages[i].username : 'Server') + ': </b>';
-                html += messages[i].message + '<br />';
-                if(messages[i].time !=undefined)    {
-                    html += '<small>' + messages[i].time + '</small>' + '<br />';
-                }
-            }
-            content.innerHTML = html;
-            content.scrollTop = content.scrollHeight;
+            $('#content').append(data.username + ": " + data.message + " "  + data.time + "<br>");
         } else {
             console.log("There is a problem:", data);
         }
@@ -37,7 +26,7 @@ window.onload = function() {
         } else {
             var text = field.value;
             var currentDate = new Date();
-            var datetime = "Last Sync: " + (currentDate.getMonth()+1) + "/"
+            var datetime = "Sent: " + (currentDate.getMonth()+1) + "/"
                 + currentDate.getDate()  + "/" 
                 + currentDate.getFullYear() + " @ "  
                 + currentDate.getHours() + ":"  
