@@ -28,35 +28,49 @@ var redisClient = redis.createClient();
 // Listening to the connection of sockets
 io.sockets.on('connection', function(socket)	{
 	// Opening Message to the user connections
-	console.log('New connection established');
-	socket.emit('message', {message: 'Welcome to Chat Mania', username: "Server", time: getDateString()});
+	console.log(socket.id + ': Connected to server');
+	socket.emit('message', {message: 'Welcome to Chat Mania', username: "Server", time: getDateTimeString()});
+	
 	// logs number of clients
-
-	redisClient.lrange("messages", 0, -1, function(err, messages) {
+	var room = 'Skinny T';
+	socket.join(room);
+	socket.set('room', room, function(){
+		//nothing here yet bbut socket room is set
+	});
+	
+	socket.on('setUsername', function(name) {
+		socket.set('username', name, function() {
+			io.sockets.in(room).emit('updateUserlist', io.sockets.clients(room)); //updates userList in room
+		});
+	});
+	
+	redisClient.lrange(socket.get('room',function(){}), 0, -1, function(err, messages) {
 		messages.forEach(function(message) {
 			socket.emit('message', message);
 		});
 	});
 	
-
 	//Listens for send event, emits to rest of sockets
 	socket.on('send', function(data)	{
-		io.sockets.emit('message', data);
-			redisClient.lpush("messages", data, function(){
-				redisClient.ltrim("messages", 0, 20);
+		var socketRoom = socket.get('room',function(){});
+		io.sockets.in(socketRoom).emit('message', data);
+			redisClient.lpush(socketRoom, data, function(){
+				redisClient.ltrim(socketRoom, 0, 20);
 			});
 	});
-
-
-
-
+	
+	socket.on('disconnect', function() {
+		console.log(socket.id + ": Disconnected from server");
+		io.sockets.in(socket.room).emit('roomDisconnect', socket.username);
+		io.sockets.in(socket.room).emit('updateUserlist', io.sockets.clients(room));
+	});
 
 });
 
 console.log("Listening on port " + port);
 
-function getDateString() {
- 	var datetime = "Sent: " + (currentDate.getMonth()+1) + "/"
+function getDateTimeString() {
+    var datetime = "Sent: " + (currentDate.getMonth()+1) + "/"
         + currentDate.getDate()  + "/" 
         + currentDate.getFullYear() + " @ "  
         + currentDate.getHours() + ":"  
