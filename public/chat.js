@@ -32,7 +32,7 @@ window.onload = function() {
     });
     
     socket.on('roomDisconnect', function(username) {
-        $(#content).append(username + " has disconnected!");
+        $('#content').append(username + " has disconnected!");
     });
  
     
