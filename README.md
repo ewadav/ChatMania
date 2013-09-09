@@ -2,11 +2,15 @@ ChatMania
 =========
 Real time chat application which will make creating real time chat implementations as easy as two lines of code!
 
-Feature List
+Current Feature List
 ---------
-1. $('div').chatBox => Should turn div into a chatbox with all the features needed
-2. Implement pseudo random colors for users
-3. Implement quick message appending
+1. Real time messaging
+2. Userlist
+
+Future Features
+--------
+1. Chat rooms
+2. Better chat room UI
 
 The Stack
 --------
