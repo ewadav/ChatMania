@@ -7,17 +7,12 @@ var app = express();
 var port = 3700;
 var redis = require('redis');
 
-app.set('views', __dirname + '/tpl');
-app.set('view engine', "jade");
-app.engine('jade', require('jade').__express);
+//app.set('views', __dirname + '/tpl');
+//app.set('view engine', "jade");
+//app.engine('jade', require('jade').__express);
 app.get("/", function(req, res){
-    res.render("page", {
-    	title: "Chat Mania"
-    });
+    res.sendfile(__dirname + '/index.html');
 });
-
-app.use(express.static(__dirname + '/public'));
-
 
 //Setup Socket IO
 var io = require('socket.io').listen(app.listen(port));
@@ -25,11 +20,27 @@ var io = require('socket.io').listen(app.listen(port));
 //Setup Redis
 var redisClient = redis.createClient();
 
+// List of usernames within client
+var usernames = {};
+
+// List of chartooms
+var rooms = ['room1', 'room2', 'room3'];
+
 // Listening to the connection of sockets
 io.sockets.on('connection', function(socket)	{
 	// Opening Message to the user connections
 	console.log(socket.id + ': Connected to server');
-	socket.emit('message', {message: 'Welcome to Chat Mania', username: "Server", time: getDateTimeString()});
+	
+	socket.on('addUser', function(username) {
+		socket.username = username;
+		socket.room = 'room1';
+		usernames[username] = username;
+		socket.join('room1');
+		socket.emit('message', 'You have connected to room1', 'Server', getDateTimeString());
+		socket.broadcast.to('room1').emit('message', username + ' has connected to this room!', 'Server', getDateTimeString());
+		socket.emit('updateRooms', rooms, 'room1');
+	})
+	
 	
 	// logs number of clients
 	var room = 'Skinny T';
