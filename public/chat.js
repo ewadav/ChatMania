@@ -2,23 +2,14 @@
 // ChatMania
 // The small real time chat application
 
-window.onload = function() {
-    var userName;
-    
-    
+    //http://psitsmike.com/2011/10/node-js-and-socket-io-multiroom-chat-tutorial/
     var socket = io.connect('http://localhost:3700');
-    var field = document.getElementById("field");
-    var sendButton = document.getElementById("send");
-    var content = document.getElementById("content");
-    var name = document.getElementById("name");
-    var userList = document.getElementById('userList');
      
-    userName = prompt("Please Enter Your Username", "");
-    socket.emit('setUsername', userName);
     
-    socket.on('message', function(data) {
-        if(data.message) {
-            $('#content').append(data.username + ": " + data.message + " "  + data.time + "<br>");
+    
+    socket.on('message', function(message, username, timeString) {
+        if(message) {
+            $('#content').append("<b>" + username + ": </b>" + data.message + " "  + data.time + "<br>");
         } else {
             console.log("There is a problem:", data);
         }
@@ -35,15 +26,16 @@ window.onload = function() {
         $('#content').append(username + " has disconnected!");
     });
  
-    
+ window.onload = function() {   
  
     sendButton.onclick = function() {
          socket.emit('send', { message: field.value, username: userName, time: getCurrentTimeString()});
          field.value = "";
          field.focus();
     };
-    
-    function getCurrentTimeString() {
+}
+
+ function getCurrentTimeString() {
         var datetimeString = "Sent: " + (currentDate.getMonth()+1) + "/"
                 + currentDate.getDate()  + "/" 
                 + currentDate.getFullYear() + " @ "  
@@ -52,5 +44,3 @@ window.onload = function() {
                 + currentDate.getSeconds(); 
         return datetimeString;
     }
- 
-}
