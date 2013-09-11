@@ -42,38 +42,36 @@ io.sockets.on('connection', function(socket)	{
 	})
 	
 	
-	// logs number of clients
-	var room = 'Skinny T';
-	socket.join(room);
-	socket.set('room', room, function(){
-		//nothing here yet bbut socket room is set
-	});
-	
-	socket.on('setUsername', function(name) {
-		socket.set('username', name, function() {
-			io.sockets.in(room).emit('updateUserlist', io.sockets.clients(room)); //updates userList in room
-		});
-	});
-	
-	redisClient.lrange(socket.get('room',function(){}), 0, -1, function(err, messages) {
+	/*redisClient.lrange(socket.room, 0, -1, function(err, messages) {
 		messages.forEach(function(message) {
 			socket.emit('message', message);
 		});
-	});
+	}); */
+	
+	socket.on('switchRoom', function(newroom) {
+		socket.leave(socket.room);
+		socket.join(newroom);
+		socket.emit('message', 'You have connected to' + newroom, 'Server');
+		socket.broadcast.to(socket.room).emit('message', socket.username + ' has left this room', 'Server', getDateTimeString());
+		socket.room = newroom;
+		socket.broadcast.to(newroom).emit('message', socket.username + ' has joined this room', 'Server', getDateTimeString());
+		socket.emit('updateRooms', rooms, newroom);
+	})
 	
 	//Listens for send event, emits to rest of sockets
-	socket.on('send', function(data)	{
-		var socketRoom = socket.get('room',function(){});
-		io.sockets.in(socketRoom).emit('message', data);
-			redisClient.lpush(socketRoom, data, function(){
-				redisClient.ltrim(socketRoom, 0, 20);
-			});
+	socket.on('send', function(message, timeString)	{
+		io.sockets.in(socket.room).emit('message', message, socket.username, timeString;
+		//	redisClient.lpush(socket.room, data, function(){
+			//	redisClient.ltrim(socketRoom, 0, 20);
+		//	});
 	});
 	
 	socket.on('disconnect', function() {
 		console.log(socket.id + ": Disconnected from server");
-		io.sockets.in(socket.room).emit('roomDisconnect', socket.username);
-		io.sockets.in(socket.room).emit('updateUserlist', io.sockets.clients(room));
+		delete usernames[socket.username];
+		io.sockets.emit('updateUsers', usernames);
+		io.sockets.in(socket.room).emit('message', socket.username + ' has disconnected', 'Server', getDateTimeString());
+		socket.leave(socket.room);
 	});
 
 });
