@@ -14,7 +14,7 @@ Future Features
 
 The Stack
 --------
-Using Node.js, Express and Jade
+Using Node.js, Express, Redis and Jade
 
 Etc.
 --------
