@@ -4,12 +4,13 @@
 
     //http://psitsmike.com/2011/10/node-js-and-socket-io-multiroom-chat-tutorial/
     var socket = io.connect('http://localhost:3700');
+    
      
     
     
     socket.on('message', function(message, username, timeString) {
         if(message) {
-            $('#content').append("<b>" + username + ": </b>" + data.message + " "  + data.time + "<br>");
+            $('#content').append("<b>" + username + ": </b>" + message + " "  + timeString + "<br>");
         } else {
             console.log("There is a problem:", data);
         }
@@ -22,9 +23,6 @@
          });
     });
     
-    socket.on('roomDisconnect', function(username) {
-        $('#content').append(username + " has disconnected!");
-    });
  
  window.onload = function() {   
  

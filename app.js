@@ -2,7 +2,7 @@
 // ChatMania
 // The small real time chat application
 
-var express = require("express");
+var express = require('express');
 var app = express();
 var port = 3700;
 var redis = require('redis');
@@ -60,7 +60,7 @@ io.sockets.on('connection', function(socket)	{
 	
 	//Listens for send event, emits to rest of sockets
 	socket.on('send', function(message, timeString)	{
-		io.sockets.in(socket.room).emit('message', message, socket.username, timeString;
+		io.sockets.in(socket.room).emit('message', message, socket.username, timeString);
 		//	redisClient.lpush(socket.room, data, function(){
 			//	redisClient.ltrim(socketRoom, 0, 20);
 		//	});
@@ -84,6 +84,6 @@ function getDateTimeString() {
         + currentDate.getFullYear() + " @ "  
         + currentDate.getHours() + ":"  
         + currentDate.getMinutes() + ":" 
-        + currentDate.getSeconds();
+        + currentDate.getSeconds(); 
     return datetime;
 }
