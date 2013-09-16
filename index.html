@@ -2,10 +2,77 @@
 <Head>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script src="public/chat.js"></script>
 </Head>
 
 <body>
+
+
+
+<script>
+
+    var socket = io.connect('http://localhost:3700');
+
+    // on connection to server, ask for user's name with an anonymous callback
+    socket.on('connect', function(){
+        // call the server-side function 'adduser' and send one parameter (value of prompt)
+        socket.emit('addUser', prompt("What's your name?"));
+    });
+
+    // listener, whenever the server emits 'updatechat', this updates the chat body
+    socket.on('message', function (username, data, timeString) {
+        $('#conversation').append('<b>'+ username + ':</b> ' + data + ' ' + '<small>' + timeString + '</small><br>');
+    });
+
+    // listener, whenever the server emits 'updaterooms', this updates the room the client is in
+    socket.on('updateRooms', function(rooms, current_room) {
+        $('#rooms').empty();
+        $.each(rooms, function(key, value) {
+            if(value == current_room){
+                $('#rooms').append('<div>' + value + '</div>');
+            }
+            else {
+                $('#rooms').append('<div><a href="#" onclick="switchRoom(\''+value+'\')">' + value + '</a></div>');
+            }
+        });
+    });
+
+    function switchRoom(room){
+        socket.emit('switchRoom', room);
+    }
+
+    // on load of page
+    $(function(){
+        // when the client clicks SEND
+        $('#datasend').click( function() {
+            var message = $('#data').val();
+            $('#data').val('');
+            // tell server to execute 'sendchat' and send along one parameter
+            socket.emit('send', message);
+        });
+
+        // when the client hits ENTER on their keyboard
+        $('#data').keypress(function(e) {
+            if(e.which == 13) {
+                $(this).blur();
+                $('#datasend').focus().click();
+            }
+        });
+    });
+
+ function getCurrentTimeString() {
+        var currentDate = new Date();
+        var datetimeString = "Sent: " + (currentDate.getMonth()+1) + "/"
+                + currentDate.getDate()  + "/" 
+                + currentDate.getFullYear() + " @ "  
+                + currentDate.getHours() + ":"  
+                + currentDate.getMinutes() + ":" 
+                + currentDate.getSeconds(); 
+        return datetimeString;
+    }
+
+ </script>
+
+
 <div style="float:left;width:100px;border-right:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
 	<b>ROOMS</b>
 	<div id="rooms"></div>

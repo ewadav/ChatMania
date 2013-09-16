@@ -36,8 +36,8 @@ io.sockets.on('connection', function(socket)	{
 		socket.room = 'room1';
 		usernames[username] = username;
 		socket.join('room1');
-		socket.emit('message', 'You have connected to room1', 'Server', getDateTimeString());
-		socket.broadcast.to('room1').emit('message', username + ' has connected to this room!', 'Server', getDateTimeString());
+		socket.emit('message', 'Server', 'You have connected to room1', getDateTimeString());
+		socket.broadcast.to('room1').emit('message','Server', username + ' has connected to this room!', getDateTimeString());
 		socket.emit('updateRooms', rooms, 'room1');
 	})
 	
@@ -51,16 +51,16 @@ io.sockets.on('connection', function(socket)	{
 	socket.on('switchRoom', function(newroom) {
 		socket.leave(socket.room);
 		socket.join(newroom);
-		socket.emit('message', 'You have connected to' + newroom, 'Server');
-		socket.broadcast.to(socket.room).emit('message', socket.username + ' has left this room', 'Server', getDateTimeString());
+		socket.emit('message', 'Server', 'You have connected to' + newroom, getDateTimeString());
+		socket.broadcast.to(socket.room).emit('message', 'Server', socket.username + ' has left this room', getDateTimeString());
 		socket.room = newroom;
-		socket.broadcast.to(newroom).emit('message', socket.username + ' has joined this room', 'Server', getDateTimeString());
+		socket.broadcast.to(newroom).emit('message', 'Server', socket.username + ' has joined this room', getDateTimeString());
 		socket.emit('updateRooms', rooms, newroom);
 	})
 	
 	//Listens for send event, emits to rest of sockets
-	socket.on('send', function(message, timeString)	{
-		io.sockets.in(socket.room).emit('message', message, socket.username, timeString);
+	socket.on('send', function(message)	{
+		io.sockets.in(socket.room).emit('message', socket.username, message, getDateTimeString());
 		//	redisClient.lpush(socket.room, data, function(){
 			//	redisClient.ltrim(socketRoom, 0, 20);
 		//	});
@@ -70,7 +70,7 @@ io.sockets.on('connection', function(socket)	{
 		console.log(socket.id + ": Disconnected from server");
 		delete usernames[socket.username];
 		io.sockets.emit('updateUsers', usernames);
-		io.sockets.in(socket.room).emit('message', socket.username + ' has disconnected', 'Server', getDateTimeString());
+		io.sockets.in(socket.room).emit('message', 'Server', socket.username + ' has disconnected', getDateTimeString());
 		socket.leave(socket.room);
 	});
 
@@ -79,6 +79,7 @@ io.sockets.on('connection', function(socket)	{
 console.log("Listening on port " + port);
 
 function getDateTimeString() {
+    var currentDate = new Date();
     var datetime = "Sent: " + (currentDate.getMonth()+1) + "/"
         + currentDate.getDate()  + "/" 
         + currentDate.getFullYear() + " @ "  
