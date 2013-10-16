@@ -18,7 +18,7 @@ app.get("/", function(req, res){
 var io = require('socket.io').listen(app.listen(port));
 
 //Setup Redis
-var redisClient = redis.createClient();
+// var redisClient = redis.createClient();
 
 
 // List of chartooms

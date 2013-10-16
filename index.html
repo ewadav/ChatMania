@@ -39,7 +39,7 @@
     socket.on('updateUsers', function(usernames) {
     	$('#users').empty();
     	$.each(usernames, function(user) {
-    		$('#users').append('<p>' + user + '</p>');
+    		$('#users').append('<p>' + usernames[user] + '</p>');
     	});
     });
 
@@ -90,7 +90,7 @@
 	<input id="data" style="width:200px;" />
 	<input type="button" id="datasend" value="send" />
 </div>
-<div style="float:left;width:100px;border-right:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
+<div style="float:left;width:100px;border-left:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
  	<b>Users</b>
  	<div id="users"></div>
 </div>
